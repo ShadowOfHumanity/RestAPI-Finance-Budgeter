@@ -28,6 +28,7 @@ public class RecieptPhotoScanner {
 
     private static final String uriBase = endpoint + "/vision/v3.1/ocr";
     private static String imageToAnalyze;
+    private static boolean isDiscounted = false;
 
 
     public static String scanReceipt(ByteArrayEntity requestEntity){
@@ -96,13 +97,23 @@ public class RecieptPhotoScanner {
 
 
                 // Check for date (assuming date format is DD/MM/YYYY) aka EUROPEAN FORMAT
-                if (date == null && text.matches("\\d{2}/\\d{2}/\\d{4}")) {
-                    date = text;
+                String trimmedText = text.trim(); // Remove prefix and suffixes to the texts
+                Pattern datePattern = Pattern.compile("(\\d{2}/\\d{2}/\\d{4})|(\\d{2}-\\d{2}-\\d{4})");
+                Matcher dateMatcher = datePattern.matcher(trimmedText);
+
+                if (date == null && dateMatcher.find()) {
+                    date = dateMatcher.group(0);
                 }
 
-                // get total price, if it has "Total before it"
 
-                if ((totalPrice == null) && (text.contains("Total") || text.contains("TOTAL") || text.contains("total") || text.contains("Total:") || text.contains("EUR") || text.contains("Amount") || text.contains("AMOUNT") || text.contains("amount") || text.contains("Due") || text.contains("DUE") || text.contains("due") || text.contains("TOTAL Euro") || text.contains("Total Euro") || text.contains("total Euro") || text.contains("TOTAL EUR") || text.contains("Total EUR") || text.contains("total EUR"))) {
+
+                if (text.contains("Discount") || text.contains("discount") || text.contains("DISCOUNT")) {
+                    isDiscounted = true;
+                } // tries to ignore the biggest decimal number if it has "Discount" in it, to try and get the real total price
+
+
+                // get total price, if it has "Total before it"
+                if ((totalPrice == null) && (text.contains("Total €") || (text.contains("Total") || text.contains("TOTAL") || text.contains("total") || text.contains("Total:") || text.contains("EUR") || text.contains("Amount") || text.contains("AMOUNT") || text.contains("amount") || text.contains("Due") || text.contains("DUE") || text.contains("due") || text.contains("TOTAL Euro") || text.contains("Total Euro") || text.contains("total Euro") || text.contains("TOTAL EUR") || text.contains("Total EUR") || text.contains("total EUR")))) {
 
                     try {
                         totalPrice = lines.getJSONObject(j + 1).getJSONArray("words").getJSONObject(1).getString("text");
@@ -123,7 +134,10 @@ public class RecieptPhotoScanner {
                                     System.out.println("Invalid input for totalPrice: " + totalPrice);
                                 }
                                 //double currentTotal = Double.parseDouble(totalPrice);
-                                if (currentTotal < amount) {
+                                if (isDiscounted) {
+                                    isDiscounted = false;
+                                }
+                                else if (currentTotal < amount) {
                                     totalPrice = String.format("%.2f", amount);
                                 }
                             } else {
@@ -143,6 +157,8 @@ public class RecieptPhotoScanner {
         System.out.println("Date: " + date);
         System.out.println("Total_Price: €" + totalPrice);
 
+
+        isDiscounted = false;
         if (companyName != null && date != null && totalPrice != null) {
             return "{Company_Name: " + companyName + ", Date: " + date + ", Total_Price: €" + totalPrice + "}";
         } else if (companyName != null && date != null) {
@@ -160,6 +176,7 @@ public class RecieptPhotoScanner {
         } else {
             return "{null}";
         }
+
 
     }
 

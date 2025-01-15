@@ -24,7 +24,6 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
-	implementation 'net.sourceforge.tess4j:tess4j:5.7.0' // OLD TESSERACT OCR/ DOESNT WORK AS WELL
 
 	implementation 'org.apache.httpcomponents:httpclient:4.5.13'
 	implementation 'org.apache.httpcomponents:httpcore:4.4.9'
