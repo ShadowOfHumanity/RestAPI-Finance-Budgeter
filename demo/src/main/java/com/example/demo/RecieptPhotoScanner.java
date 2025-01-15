@@ -86,8 +86,7 @@ public class RecieptPhotoScanner {
                     // Match common company name patterns,business types and suffixes
                     // also checks if there is a number before the company name or after, so it can rule it out as a name.
                     Pattern companyPattern = Pattern.compile(
-                            "(?i)(?<!\\d\\.?)\\b[A-Za-z]+(?:\\s+[A-Za-z]+)*\\s*(Pharmacy|Store|Shop|Clinic|Market|Mini\\s?Market|Grocery|Retail|Supermarket|Laboratory|Pharmaceuticals|Corporation|Inc|Ltd|Enterprise|Services|Consulting|Group|Systems|Technologies|International|Associates|Industries|Co|LLC|LLP|Network|Solutions|Works|Firm|Manufacturing|Wholesale|Supplies|Furniture|Construction|Import|Export|Foods|Toys|Jewelry|Boutique|Bakery|Electronics|Automotive|Cosmetics|Textiles|Crafts|Apparel|Technology|Stationary|Confectionary|Beverages|Discount|Convenience|Pet\\s?Store|Health|Vape\\s?Shop|Mobile|Fashion|Clothing|Sport|Outdoors|Toy\\s?Store|Cellular|Optical|Bedding|Home\\s?Goods|Tech|Luxury|Restaurant|Bar|Café|Catering|Florist|Gifts|Home\\s?Improvements|Arts\\s?Crafts)\\b(?!\\.?\\d)"
-                    );
+                            "(?i)(?<!\\d\\.?)\\b[A-Za-z]+(?:\\s+[A-Za-z]+)*\\s*(Pharmacy|Store|Shop|Clinic|Market|Mini\\s?Market|Grocery|Retail|Supermarket|Laboratory|Pharmaceuticals|Corporation|Inc|Ltd|Enterprise|Services|Consulting|Group|Systems|Technologies|International|Associates|Industries|Co|LLC|LLP|Network|Solutions|Works|Firm|Manufacturing|Wholesale|Supplies|Furniture|Construction|Import|Export|Foods|Toys|Jewelry|Boutique|Bakery|Electronics|Automotive|Cosmetics|Textiles|Crafts|Apparel|Technology|Stationary|Confectionary|Beverages|Convenience|Pet\\s?Store|Health|Vape\\s?Shop|Mobile|Fashion|Clothing|Sport|Outdoors|Toy\\s?Store|Cellular|Optical|Bedding|Home\\s?Goods|Tech|Luxury|Restaurant|Bar|Café|Catering|Florist|Gifts|Home\\s?Improvements|Arts\\s?Crafts|Lidl|Eurospin|Eurosport|McDonald's|KFC|CFC|Burger\\s?King|SFC|Chick\\s?King|Chicken\\s?King|Chubbz|Starbucks|Pizza\\s?Hut|Domino's|Sphinx|Jeff(?:'s)?|Maxim's)\\b(?!\\.?\\d)"                    );
                     Matcher companyMatcher = companyPattern.matcher(text);
 
                     if (companyMatcher.find()) {
@@ -124,8 +123,9 @@ public class RecieptPhotoScanner {
                     } else {
                     for (int k = 0; k < words.length(); k++) {
                         String word = words.getJSONObject(k).getString("text");
-                        if (word.matches("€?\\d+\\.\\d{2}")) { // match is a number with opt € symbol
-                            double amount = Double.parseDouble(word.replace("€", ""));
+                        if (word.matches("€?\\d+[.,]\\d{2}")) { // match is a number with opt € symbol
+
+                            double amount = Double.parseDouble(word.replace("€", "").replace(",", "."));
                             if (totalPrice != null) {
                                 double currentTotal = 0.00;
                                 try {
