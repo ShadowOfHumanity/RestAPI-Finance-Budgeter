@@ -2,9 +2,9 @@ package com.example.demo;
 
 
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.apache.http.entity.ByteArrayEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api")
@@ -15,9 +15,17 @@ public class RController {
         return "Hello, World!";
     }
 
-    @GetMapping("/ScanReciept")
-    public double scanReciept() {
-        return 0.0;
+    @PostMapping("/ScanReceipt")
+    public String scanReciept(@RequestParam("file") MultipartFile file) {
+        try {
+            byte[] bytes = file.getBytes();
+            ByteArrayEntity requestEntity = new ByteArrayEntity(bytes);
+            return RecieptPhotoScanner.scanReceipt(requestEntity);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Error processing file";
+        }
     }
+
 
 }

@@ -14,7 +14,6 @@ public class MultiToolBudgeterApplication {
 		SpringApplication.run(MultiToolBudgeterApplication.class, args);
 
 
-		ReceiptScanner imageScannerDemo = new ReceiptScanner();
 
 
 
