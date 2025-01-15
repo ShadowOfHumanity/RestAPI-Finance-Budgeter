@@ -19,8 +19,12 @@ public class RController {
     public String scanReciept(@RequestParam("file") MultipartFile file) {
         try {
             byte[] bytes = file.getBytes();
-            ByteArrayEntity requestEntity = new ByteArrayEntity(bytes);
-            return RecieptPhotoScanner.scanReceipt(requestEntity);
+            ByteArrayEntity requestEntity = new ByteArrayEntity(bytes); //without contrast
+            return RecieptPhotoScanner.scanReceipt(requestEntity); //without contrast
+
+//            byte[] contrastAdjustedBytes = RecieptPhotoScanner.adjustContrast(bytes, 1.5f);
+//            ByteArrayEntity requestEntity = new ByteArrayEntity(contrastAdjustedBytes);
+//            return RecieptPhotoScanner.scanReceipt(requestEntity);
         } catch (Exception e) {
             e.printStackTrace();
             return "Error processing file";

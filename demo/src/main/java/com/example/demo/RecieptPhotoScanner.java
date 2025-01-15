@@ -11,7 +11,13 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.awt.image.RescaleOp;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -76,12 +82,14 @@ public class RecieptPhotoScanner {
 
                 // Check for company name
                 if (companyName == null) {
-                    // Match common company name patterns, including more business types and suffixes
-                    Pattern companyPattern = Pattern.compile("(?i)(\\b[A-Za-z]+(?:\\s+[A-Za-z]+)*\\s*(Pharmacy|Store|Shop|Clinic|Market|Mini\\s?Market|Grocery|Retail|Supermarket|Laboratory|Pharmaceuticals|Corporation|Inc|Ltd|Enterprise|Services|Consulting|Group|Systems|Technologies|International|Associates|Industries|Co|LLC|LLP|Network|Solutions|Works|Firm|Manufacturing|Wholesale|Supplies|Furniture|Construction|Import|Export|Foods|Toys|Jewelry|Boutique|Bakery|Electronics|Automotive|Cosmetics|Textiles|Crafts|Apparel|Technology|Stationary|Confectionary|Beverages|Discount|Convenience|Pet\\s?Store|Health|Vape\\s?Shop|Mobile|Fashion|Clothing|Sport|Outdoors|Toy\\s?Store|Cellular|Optical|Bedding|Home\\s?Goods|Tech|Luxury|Restaurant|Bar|Café|Catering|Florist|Gifts|Home\\s?Improvements|Arts\\s?Crafts)\\b)");
+                    // Match common company name patterns,business types and suffixes
+                    Pattern companyPattern = Pattern.compile(
+                            "(?i)(?<!\\d\\.?)\\b[A-Za-z]+(?:\\s+[A-Za-z]+)*\\s*(Pharmacy|Store|Shop|Clinic|Market|Mini\\s?Market|Grocery|Retail|Supermarket|Laboratory|Pharmaceuticals|Corporation|Inc|Ltd|Enterprise|Services|Consulting|Group|Systems|Technologies|International|Associates|Industries|Co|LLC|LLP|Network|Solutions|Works|Firm|Manufacturing|Wholesale|Supplies|Furniture|Construction|Import|Export|Foods|Toys|Jewelry|Boutique|Bakery|Electronics|Automotive|Cosmetics|Textiles|Crafts|Apparel|Technology|Stationary|Confectionary|Beverages|Discount|Convenience|Pet\\s?Store|Health|Vape\\s?Shop|Mobile|Fashion|Clothing|Sport|Outdoors|Toy\\s?Store|Cellular|Optical|Bedding|Home\\s?Goods|Tech|Luxury|Restaurant|Bar|Café|Catering|Florist|Gifts|Home\\s?Improvements|Arts\\s?Crafts)\\b(?!\\.?\\d)"
+                    );
                     Matcher companyMatcher = companyPattern.matcher(text);
 
                     if (companyMatcher.find()) {
-                        companyName = companyMatcher.group(0).trim();  // Capture the whole company name
+                        companyName = companyMatcher.group(0).trim();  // attempt to  Capture the whole company name
                     }
                 }
 
@@ -95,14 +103,25 @@ public class RecieptPhotoScanner {
 
                 if ((totalPrice == null) && (text.contains("Total") || text.contains("TOTAL") || text.contains("total") || text.contains("Total:") || text.contains("EUR") || text.contains("Amount") || text.contains("AMOUNT") || text.contains("amount") || text.contains("Due") || text.contains("DUE") || text.contains("due") || text.contains("TOTAL Euro") || text.contains("Total Euro") || text.contains("total Euro") || text.contains("TOTAL EUR") || text.contains("Total EUR") || text.contains("total EUR"))) {
 
-                    totalPrice = lines.getJSONObject(j + 1).getJSONArray("words").getJSONObject(1).getString("text");
-                } else {
+                    try {
+                        totalPrice = lines.getJSONObject(j + 1).getJSONArray("words").getJSONObject(1).getString("text");
+                    } catch (Exception e) {
+                        continue;
+                    }
+
+                    } else {
                     for (int k = 0; k < words.length(); k++) {
                         String word = words.getJSONObject(k).getString("text");
                         if (word.matches("€?\\d+\\.\\d{2}")) { // match is a number with opt € symbol
                             double amount = Double.parseDouble(word.replace("€", ""));
                             if (totalPrice != null) {
-                                double currentTotal = Double.parseDouble(totalPrice);
+                                double currentTotal = 0.00;
+                                try {
+                                    currentTotal = Double.parseDouble(totalPrice);
+                                } catch (NumberFormatException e) {
+                                    System.out.println("Invalid input for totalPrice: " + totalPrice);
+                                }
+                                //double currentTotal = Double.parseDouble(totalPrice);
                                 if (currentTotal < amount) {
                                     totalPrice = String.format("%.2f", amount);
                                 }
@@ -141,6 +160,22 @@ public class RecieptPhotoScanner {
             return "{null}";
         }
 
+    }
+
+    public static byte[] adjustContrast(byte[] imageBytes, float contrast) throws IOException {
+        BufferedImage original = ImageIO.read(new ByteArrayInputStream(imageBytes));
+        BufferedImage adjusted = new BufferedImage(
+                original.getWidth(),
+                original.getHeight(),
+                original.getType()
+        );
+
+        RescaleOp rescaleOp = new RescaleOp(contrast, 15, null);
+        rescaleOp.filter(original, adjusted);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(adjusted, "jpg", baos);
+        return baos.toByteArray();
     }
 
 
