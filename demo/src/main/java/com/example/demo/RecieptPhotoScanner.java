@@ -109,12 +109,9 @@ public class RecieptPhotoScanner {
                     date = dateMatcher.group(0);
                 }
 
-
-
                 if (text.contains("Discount") || text.contains("discount") || text.contains("DISCOUNT")) {
                     isDiscounted = true;
                 } // tries to ignore the biggest decimal number if it has "Discount" in it, to try and get the real total price
-
 
                 // get total price, if it has "Total before it"
                 if ((totalPrice == null) && (text.contains("Total €") || (text.contains("Total") || text.contains("TOTAL") || text.contains("total") || text.contains("Total:") || text.contains("EUR") || text.contains("Amount") || text.contains("AMOUNT") || text.contains("amount") || text.contains("Due") || text.contains("DUE") || text.contains("due") || text.contains("TOTAL Euro") || text.contains("Total Euro") || text.contains("total Euro") || text.contains("TOTAL EUR") || text.contains("Total EUR") || text.contains("total EUR")))) {
@@ -153,11 +150,8 @@ public class RecieptPhotoScanner {
                     }
                 }
             }
-
-
         }
-
-
+        System.out.println("------------------ LOGGING ------------------");
         System.out.println("Company Name: " + companyName);
         System.out.println("Date: " + date);
         System.out.println("Total_Price: €" + totalPrice);
