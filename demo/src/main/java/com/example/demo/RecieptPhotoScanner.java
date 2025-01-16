@@ -20,11 +20,6 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-// TODO: ADD BETTER REGEX FOR COMPANY NAME, ADD WEIGHTS FOR NAMES NOT PATTERNS LIKE "LIDL" OR "EUROSPIN"
-// TODO: ADD COMPRESSION FOR WHEN IMAGE IS TOO BIG OF A FILE TO SEND
-// TODO: clean up regex for company name
-
-
 public class RecieptPhotoScanner {
     private static final String key = System.getenv("AZURE_VISION_KEY");
     private static final String endpoint = System.getenv("AZURE_VISION_ENDPOINT");
@@ -37,7 +32,7 @@ public class RecieptPhotoScanner {
     public static String scanReceipt(ByteArrayEntity requestEntity){
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         try {
-            URIBuilder builder = new URIBuilder(uriBase);
+            URIBuilder builder = new URIBuilder(uriBase); // URI builder for the request to OCR RESTApi
             builder.setParameter("visualFeatures", "Categories,Description,Color");
 
             // getting request
@@ -48,7 +43,7 @@ public class RecieptPhotoScanner {
 
             request.setEntity(requestEntity);
 
-            // RestApi call and Response
+            // RestApi call and Response (ocr)
             HttpResponse response = httpClient.execute(request);
             HttpEntity entity = response.getEntity();
 
@@ -86,17 +81,23 @@ public class RecieptPhotoScanner {
 
 
                 // Check for company name
-                if (companyName == null) {
-                    // Match common company name patterns,business types and suffixes
-                    // also checks if there is a number before the company name or after, so it can rule it out as a name.
-                    Pattern companyPattern = Pattern.compile(
-                            "(?i)(?<!\\d\\.?)\\b[A-Za-z]+(?:\\s+[A-Za-z]+)*\\s*(Pharmacy|Store|Shop|Clinic|Market|Mini\\s?Market|Grocery|Retail|Supermarket|Laboratory|Pharmaceuticals|Corporation|Inc|Ltd|Enterprise|Services|Consulting|Group|Systems|Technologies|International|Associates|Industries|Co|LLC|LLP|Network|Solutions|Works|Firm|Manufacturing|Wholesale|Supplies|Furniture|Construction|Import|Export|Foods|Toys|Jewelry|Boutique|Bakery|Electronics|Automotive|Cosmetics|Textiles|Crafts|Apparel|Technology|Stationary|Confectionary|Beverages|Convenience|Pet\\s?Store|Health|Vape\\s?Shop|Mobile|Fashion|Clothing|Sport|Outdoors|Toy\\s?Store|Cellular|Optical|Bedding|Home\\s?Goods|Tech|Luxury|Restaurant|Bar|Café|Catering|Florist|Gifts|Home\\s?Improvements|Arts\\s?Crafts|Lidl|Eurospin|Eurosport|McDonald's|KFC|CFC|Burger\\s?King|SFC|Chick\\s?King|Chicken\\s?King|Chubbz|Starbucks|Pizza\\s?Hut|Domino's|Sphinx|Jeff(?:'s)?|Maxim's)\\b(?!\\.?\\d)"                    );
-                    Matcher companyMatcher = companyPattern.matcher(text);
+                String cleanedText = text.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+                if (CompanyService.isCompanyPresent(cleanedText)){
+                    companyName = cleanedText;
+                } else {
+                    if (companyName == null) {
+                        // Match common company name patterns,business types and suffixes
+                        // also checks if there is a number before the company name or after, so it can rule it out as a name.
+                        Pattern companyPattern = Pattern.compile(
+                                "(?i)(?<!\\d\\.?)\\b[A-Za-z]+(?:\\s+[A-Za-z]+)*\\s*(Pharmacy|Store|Shop|Clinic|Market|Mini\\s?Market|Grocery|Retail|Supermarket|Laboratory|Pharmaceuticals|Corporation|Inc|Ltd|Enterprise|Services|Consulting|Group|Systems|Technologies|International|Associates|Industries|Co|LLC|LLP|Network|Solutions|Works|Firm|Manufacturing|Wholesale|Supplies|Furniture|Construction|Import|Export|Foods|Toys|Jewelry|Boutique|Bakery|Electronics|Automotive|Cosmetics|Textiles|Crafts|Apparel|Technology|Stationary|Confectionary|Beverages|Convenience|Pet\\s?Store|Health|Vape\\s?Shop|Mobile|Fashion|Clothing|Sport|Outdoors|Toy\\s?Store|Cellular|Optical|Bedding|Home\\s?Goods|Tech|Luxury|Restaurant|Bar|Café|Catering|Florist|Gifts|Home\\s?Improvements|Arts\\s?Crafts)\\b(?!\\.?\\d)");
+                        Matcher companyMatcher = companyPattern.matcher(cleanedText);
 
-                    if (companyMatcher.find()) {
-                        companyName = companyMatcher.group(0).trim();  // attempt to  Capture the whole company name
+                        if (companyMatcher.find()) {
+                            companyName = companyMatcher.group(0).trim();  // attempt to  Capture the whole company name
+                        }
                     }
                 }
+
 
 
                 // Check for date (assuming date format is DD/MM/YYYY) aka EUROPEAN FORMAT
