@@ -26,8 +26,8 @@ import java.util.regex.Pattern;
 
 
 public class RecieptPhotoScanner {
-    private static String key = System.getenv("AZURE_VISION_KEY");
-    private static String endpoint = System.getenv("AZURE_VISION_ENDPOINT");
+    private static final String key = System.getenv("AZURE_VISION_KEY");
+    private static final String endpoint = System.getenv("AZURE_VISION_ENDPOINT");
 
     private static final String uriBase = endpoint + "/vision/v3.1/ocr";
     private static String imageToAnalyze;
@@ -73,6 +73,7 @@ public class RecieptPhotoScanner {
         String date = null;
         String totalPrice = null;
 
+        // iterate through lines, words in lines, and text in words
         for (int i = 0; i < regions.length(); i++) {
             JSONArray lines = regions.getJSONObject(i).getJSONArray("lines");
             for (int j = 0; j < lines.length(); j++) {
