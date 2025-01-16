@@ -125,7 +125,7 @@ public class RecieptPhotoScanner {
                         continue;
                     }
 
-                    } else {
+                } else {
                     for (int k = 0; k < words.length(); k++) {
                         String word = words.getJSONObject(k).getString("text");
                         if (word.matches("€?\\d+[.,]\\d{2}")) { // match is a number with opt € symbol
