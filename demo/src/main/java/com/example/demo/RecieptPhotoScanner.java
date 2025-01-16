@@ -16,11 +16,14 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+// TODO: ADD BETTER REGEX FOR COMPANY NAME, ADD WEIGHTS FOR NAMES NOT PATTERNS LIKE "LIDL" OR "EUROSPIN"
+// TODO: ADD COMPRESSION FOR WHEN IMAGE IS TOO BIG OF A FILE TO SEND
+// TODO: clean up regex for company name
+
 
 public class RecieptPhotoScanner {
     private static String key = System.getenv("AZURE_VISION_KEY");
