@@ -16,15 +16,15 @@ public class RController {
     }
 
     @PostMapping("/ScanReceipt")
-    public String scanReciept(@RequestParam("file") MultipartFile file) {
+    public String scanReceipt(@RequestParam("file") MultipartFile file) {
         try {
             byte[] bytes = file.getBytes();
             ByteArrayEntity requestEntity = new ByteArrayEntity(bytes); //without contrast
-            return RecieptPhotoScanner.scanReceipt(requestEntity); //without contrast
+            return ReceiptPhotoScanner.scanReceipt(requestEntity); //without contrast
 
-//            byte[] contrastAdjustedBytes = RecieptPhotoScanner.adjustContrast(bytes, 1.5f);
+//            byte[] contrastAdjustedBytes = ReceiptPhotoScanner.adjustContrast(bytes, 1.5f);
 //            ByteArrayEntity requestEntity = new ByteArrayEntity(contrastAdjustedBytes);
-//            return RecieptPhotoScanner.scanReceipt(requestEntity);
+//            return ReceiptPhotoScanner.scanReceipt(requestEntity);
         } catch (Exception e) {
             e.printStackTrace();
             return "Error processing file";

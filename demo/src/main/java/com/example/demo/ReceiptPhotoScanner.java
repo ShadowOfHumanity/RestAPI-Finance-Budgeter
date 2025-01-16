@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class RecieptPhotoScanner {
+public class ReceiptPhotoScanner {
     private static final String key = System.getenv("AZURE_VISION_KEY");
     private static final String endpoint = System.getenv("AZURE_VISION_ENDPOINT");
 
@@ -190,9 +190,9 @@ public class RecieptPhotoScanner {
         RescaleOp rescaleOp = new RescaleOp(contrast, 15, null);
         rescaleOp.filter(original, adjusted);
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ImageIO.write(adjusted, "jpg", baos);
-        return baos.toByteArray();
+        ByteArrayOutputStream ByteOutputStream = new ByteArrayOutputStream();
+        ImageIO.write(adjusted, "jpg", ByteOutputStream);
+        return ByteOutputStream.toByteArray();
     }
 
 
