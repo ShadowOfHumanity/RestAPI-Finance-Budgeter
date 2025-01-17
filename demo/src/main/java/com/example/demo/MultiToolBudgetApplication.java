@@ -12,5 +12,6 @@ public class MultiToolBudgetApplication {
 	// TODO: COMPRESSION HAS TO BE APPLIED CLIENT SIDE
 	public static void main(String[] args) {
 		SpringApplication.run(MultiToolBudgetApplication.class, args);
+
 	}
 }

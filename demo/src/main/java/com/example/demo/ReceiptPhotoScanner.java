@@ -25,7 +25,6 @@ public class ReceiptPhotoScanner {
     private static final String endpoint = System.getenv("AZURE_VISION_ENDPOINT");
 
     private static final String uriBase = endpoint + "/vision/v3.1/ocr";
-    private static String imageToAnalyze;
     private static boolean isDiscounted = false;
 
 
@@ -135,7 +134,6 @@ public class ReceiptPhotoScanner {
                                 } catch (NumberFormatException e) {
                                     System.out.println("Invalid input for totalPrice: " + totalPrice);
                                 }
-                                //double currentTotal = Double.parseDouble(totalPrice);
                                 if (isDiscounted) {
                                     isDiscounted = false;
                                 }
