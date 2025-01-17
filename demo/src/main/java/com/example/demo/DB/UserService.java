@@ -34,4 +34,11 @@ public class UserService {
 
         return userRepository.save(newUser);
     }
+
+    public boolean checkUser(String username, String password) {
+        if (username == null || password == null) {
+            throw new IllegalArgumentException("All fields must be non-null");
+        }
+        return userRepository.existsByUsernameAndPassword(username, password);
+    }
 }
