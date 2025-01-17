@@ -5,7 +5,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
-
 @SpringBootApplication
 public class MultiToolBudgetApplication {
 	// TODO: make it possible on both phone and computer using RController
