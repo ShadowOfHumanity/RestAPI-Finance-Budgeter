@@ -2,13 +2,20 @@ package com.example.demo;
 
 
 
+import com.example.demo.DB.*;
 import org.apache.http.entity.ByteArrayEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api")
 public class RController {
+    private final UserService userService;
+    @Autowired
+    public RController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping("/hello")
     public String helloWorld() {
@@ -29,6 +36,11 @@ public class RController {
             e.printStackTrace();
             return "Error processing file";
         }
+    }
+
+    @PostMapping("/CreateUser")
+    public User createUser(@RequestParam("username") String username, @RequestParam("password") String password, @RequestParam("email") String email) {
+        return userService.createUser(username, password, email);
     }
 
 
