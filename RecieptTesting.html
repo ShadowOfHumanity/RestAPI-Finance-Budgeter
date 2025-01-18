@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Receipt Scanner Test</title>
+</head>
+<body>
+    <h2>Upload Receipt</h2>
+    <form action="http://localhost:8080/api/ScanReceipt" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" accept="image/*">
+	<br>
+	<br>
+	<label for="username">Username:</label>
+        <input type="text" id="username" name="username" required><br><br>
+	<label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br><br>
+
+
+
+        <button type="submit">Upload Receipt</button>
+ 	
+    </form>
+</body>
+</html>
