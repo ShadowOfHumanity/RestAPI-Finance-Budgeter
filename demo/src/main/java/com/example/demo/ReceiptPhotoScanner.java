@@ -51,7 +51,7 @@ public class ReceiptPhotoScanner {
                 String jsonString = EntityUtils.toString(entity);
                 JSONObject json = new JSONObject(jsonString);
                 System.out.println(json.toString(2));
-                return extractInfo(json);
+                return extractInfo(json); // grab the info from the JSON response through the receipt
             }
 
         } catch (Exception e) {
@@ -121,7 +121,7 @@ public class ReceiptPhotoScanner {
                         continue;
                     }
 
-                } else {
+                } else { // get total price, if it is the highest number in the receipt, and it is not a discount and or maybe has a € symbol
                     for (int k = 0; k < words.length(); k++) {
                         String word = words.getJSONObject(k).getString("text");
                         if (word.matches("€?\\d+[.,]\\d{2}")) { // match is a number with opt € symbol
