@@ -41,4 +41,9 @@ public class UserService {
         }
         return userRepository.existsByUsernameAndPassword(username, password);
     }
+
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+    }
 }
