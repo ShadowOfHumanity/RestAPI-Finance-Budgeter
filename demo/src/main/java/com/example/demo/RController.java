@@ -54,24 +54,52 @@ public class RController {
         }
     }
 
+    @PostMapping("/ConfirmReceipt")
+    public ResponseEntity<?> confirmReceipt(@RequestParam("username") String username,
+                                           @RequestParam("password") String password,
+                                           @RequestParam("amount") BigDecimal amount) {
+        // if user and pass are not valid return bad request
+        if (!userService.checkUser(username, password)) {
+            return ResponseEntity.badRequest().body("Invalid credentials");
+        }
+
+        try {   // get user by username
+            User user = userService.getUserByUsername(username);
+            Finances updated = financesService.updateReceiptSpending(user.getUserID(), amount); // update receipt spending
+            spentYearlyService.updateYearlyTotal(user.getUserID(), amount); // update yearly total
+            return ResponseEntity.ok(updated);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
 //    @PostMapping("/CreateUser")
 //    public User createUser(@RequestParam("username") String username, @RequestParam("password") String password, @RequestParam("email") String email) {
 //        return userService.createUser(username, password, email);
 //    }
-@PostMapping("/CreateUser")
-public ResponseEntity<?> createUser(@RequestParam("username") String username,
+    @PostMapping("/CreateUser")
+    public ResponseEntity<?> createUser(@RequestParam("username") String username,
                                     @RequestParam("password") String password,
-                                    @RequestParam("email") String email) {
-    try {
-        User newUser = userService.createUser(username, password, email);
-        // Initialize financial records for new user
-        financesService.createFinancesForUser(newUser);
-        spentYearlyService.createInitialYearlyRecord(newUser);
-        return ResponseEntity.ok(newUser);
-    } catch (IllegalArgumentException e) {
-        return ResponseEntity.badRequest().body(e.getMessage());
+                                        @RequestParam("email") String email) {
+        try {
+            User newUser = userService.createUser(username, password, email);
+            // Initialize financial records for new user
+            financesService.createFinancesForUser(newUser);
+            spentYearlyService.createInitialYearlyRecord(newUser);
+            return ResponseEntity.ok(newUser);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
-}
+
+    @PostMapping("/Login")
+    public ResponseEntity<?> login(@RequestParam("username") String username, @RequestParam("password") String password) {
+        if (userService.checkUser(username, password)) {
+            return ResponseEntity.ok("Login successful");
+        } else {
+            return ResponseEntity.badRequest().body("Invalid credentials");
+        }
+    }
 
     // Financial endpoints
     @PostMapping("/spending/card")
