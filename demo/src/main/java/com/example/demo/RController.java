@@ -56,19 +56,25 @@ public class RController {
 
     @PostMapping("/ConfirmReceipt")
     public ResponseEntity<?> confirmReceipt(@RequestParam("username") String username,
-                                           @RequestParam("password") String password,
-                                           @RequestParam("amount") BigDecimal amount,
-                                            @RequestParam("companyName") String companyName) {
-        // if user and pass are not valid return bad request
+                                            @RequestParam("password") String password,
+                                            @RequestParam("amount") BigDecimal amount,
+                                            @RequestParam(value = "companyName", required = false) String companyName) {
+        // Existing validation logic remains the same
         if (!userService.checkUser(username, password)) {
             return ResponseEntity.badRequest().body("Invalid credentials");
         }
 
-        try {   // get user by username
+        try {
             User user = userService.getUserByUsername(username);
-            Finances updated = financesService.updateReceiptSpending(user.getUserID(), amount); // update receipt spending
-            spentYearlyService.updateYearlyTotal(user.getUserID(), amount); // update yearly total
-            return ResponseEntity.ok(updated);
+            Finances updated = financesService.updateReceiptSpending(user.getUserID(), amount);
+            spentYearlyService.updateYearlyTotal(user.getUserID(), amount);
+
+            // JSON response with optional company name
+            if (companyName != null) {
+                return ResponseEntity.ok("{Company_Name: " + companyName + ", Total_Price: €" + amount + "}");
+            } else {
+                return ResponseEntity.ok("{Total_Price: €" + amount + "}");
+            }
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
