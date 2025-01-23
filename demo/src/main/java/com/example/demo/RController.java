@@ -57,7 +57,8 @@ public class RController {
     @PostMapping("/ConfirmReceipt")
     public ResponseEntity<?> confirmReceipt(@RequestParam("username") String username,
                                            @RequestParam("password") String password,
-                                           @RequestParam("amount") BigDecimal amount) {
+                                           @RequestParam("amount") BigDecimal amount,
+                                            @RequestParam("companyName") String companyName) {
         // if user and pass are not valid return bad request
         if (!userService.checkUser(username, password)) {
             return ResponseEntity.badRequest().body("Invalid credentials");

@@ -21,12 +21,12 @@ public class SpentYearly {
     @JoinColumn(name = "UserID", nullable = false)
     private User user;
 
-    // Default constructor
+
     public SpentYearly() {
         this.total = BigDecimal.ZERO;
     }
 
-    // Constructor with all fields
+
     public SpentYearly(Long yearID, BigDecimal total, Integer year, User user) {
         this.yearID = yearID;
         this.total = total;

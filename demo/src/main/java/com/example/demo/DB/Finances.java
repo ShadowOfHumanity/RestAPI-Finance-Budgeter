@@ -24,14 +24,13 @@ public class Finances {
     @JoinColumn(name = "UserID", nullable = false)
     private User user;
 
-    // Default constructor
     public Finances() {
         this.spentOnCard = BigDecimal.ZERO;
         this.spentWithReceipt = BigDecimal.ZERO;
         this.spentTotal = BigDecimal.ZERO;
     }
 
-    // Constructor with all fields
+
     public Finances(Long financeID, BigDecimal spentOnCard, BigDecimal spentWithReceipt,
                     BigDecimal spentTotal, User user) {
         this.financeID = financeID;

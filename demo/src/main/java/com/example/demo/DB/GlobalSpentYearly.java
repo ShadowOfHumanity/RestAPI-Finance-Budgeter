@@ -21,14 +21,14 @@ public class GlobalSpentYearly {
     @Column(name = "SuperMarket")
     private BigDecimal superMarket;
 
-    // Default constructor
+
     public GlobalSpentYearly() {
         this.total = BigDecimal.ZERO;
         this.convenience = BigDecimal.ZERO;
         this.superMarket = BigDecimal.ZERO;
     }
 
-    // Constructor with all fields
+
     public GlobalSpentYearly(Integer year, BigDecimal total, BigDecimal convenience, BigDecimal superMarket) {
         this.year = year;
         this.total = total;

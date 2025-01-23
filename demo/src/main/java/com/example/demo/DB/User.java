@@ -18,11 +18,10 @@ public class User {
     private String password;
     private String email;
 
-    // Default constructor
+
     public User() {
     }
 
-    // Constructor with all fields
     public User(Long userID, String username, String password, String email) {
         this.userID = userID;
         this.username = username;

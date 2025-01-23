@@ -76,7 +76,7 @@ public class GlobalSpentYearlyService {
                 .orElseGet(() -> createOrUpdateYearRecord(year));
     }
 
-    // Additional admin-only operations
+    // additional backend operations
     public void deleteYearRecord(Integer year) {
         globalSpentYearlyRepository.deleteById(year);
     }
