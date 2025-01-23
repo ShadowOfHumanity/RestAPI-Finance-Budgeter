@@ -1,12 +1,7 @@
 package com.example.demo.DB;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
 import java.math.BigDecimal;
 
 @Entity
@@ -16,8 +11,13 @@ public class Finances {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long financeID;
 
+    @Column(name = "SpentOnCard")
     private BigDecimal spentOnCard;
+
+    @Column(name = "SpentWithReceipt")
     private BigDecimal spentWithReceipt;
+
+    @Column(name = "SpentTotal")
     private BigDecimal spentTotal;
 
     @ManyToOne
